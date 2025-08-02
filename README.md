@@ -117,6 +117,15 @@ This is the step-by-step breakdown of what happens inside the automation:
 
 ---
 
+## 🔁 Workflow Overview
+
+![Workflow Overview](./Workflow.png)
+
+## 🎨 Image Generated Example
+
+![Image Generation ](./Example.png)
+
+
 ## 🙌 Credits
 
 Built as part of my internship project — from scratch, solo, and fully custom. Proud to say: **no third-party fluff, just engineering.**
