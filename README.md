@@ -15,7 +15,7 @@ This repository contains the exported `.json` of the automation workflow that:
 
 ## 📂 Files Included
 
-- `carousal posting.json` – Main automation workflow
+- `Instagram Carousel.json` – Main automation workflow
 - `README.md` – You're here :)
 
 ---
@@ -125,7 +125,7 @@ Built as part of my internship project — from scratch, solo, and fully custom.
 
 ## 📬 Feedback / Help?
 
-Feel free to open an [Issue](https://github.com/) or connect with me on [LinkedIn](https://www.linkedin.com/).
+Feel free to open an [Issue](https://github.com/sankalpgaur17) or connect with me on [LinkedIn](https://www.linkedin.com/in/sankalpgaur/).
 
 ---
 
