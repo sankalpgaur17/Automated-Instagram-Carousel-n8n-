@@ -1,0 +1,2023 @@
+{
+  "name": "Instagram Carousel",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -6784,
+        -240
+      ],
+      "id": "14824ee4-c979-4978-a0a1-f1b2465a2ea7",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/devt3wwgz/image/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "upload_preset",
+              "value": "n8n_unsigned"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1984,
+        -224
+      ],
+      "id": "f038fe0f-d1da-4d58-8925-4cf7cc47cb62",
+      "name": "ImageUpload1",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "8ZSWz0vC61Tfi7r9",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -3888,
+        -256
+      ],
+      "id": "d481bc6a-d6ee-4692-8437-51f60c73b25c",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dddb2969-080f-42cf-be70-217ce5b71c75",
+              "name": "heading",
+              "value": "={{ $json.heading }}",
+              "type": "string"
+            },
+            {
+              "id": "b6c4f6dc-e927-4ca0-b2c9-2a156ca89196",
+              "name": "slideindex",
+              "value": "={{ $json.slideIndex-1 }} ",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4640,
+        32
+      ],
+      "id": "dd4ef648-e5eb-4619-ae8b-30eb4f7809f1",
+      "name": "Heading"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dddb2969-080f-42cf-be70-217ce5b71c75",
+              "name": "subheading1",
+              "value": "={{ $json.subheadings[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "0bf918ca-4434-47f4-910a-de6fdb27f7fd",
+              "name": "subheading2",
+              "value": "={{ $json.subheadings[1] || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "512b17c8-3cee-4063-bde4-4b48ed18a7ad",
+              "name": "subheading3",
+              "value": "={{ $json.subheadings[2] || \"\"}}",
+              "type": "string"
+            },
+            {
+              "id": "ceb5841b-fdab-4833-b6ad-3590608de13d",
+              "name": "slideindex",
+              "value": "={{ $json.slideIndex }}",
+              "type": "number"
+            },
+            {
+              "id": "d88e2350-2e87-4376-a48c-eb4a0448ff0c",
+              "name": "subheading",
+              "value": "___________________________________",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4096,
+        256
+      ],
+      "id": "27088544-a4ca-456d-93a8-a4371d19129c",
+      "name": "Subheading"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1qYbm8ndanEzkex-JzgsNE57Tr7ljCxMi",
+          "mode": "list",
+          "cachedResultName": "final.png",
+          "cachedResultUrl": "https://drive.google.com/file/d/1qYbm8ndanEzkex-JzgsNE57Tr7ljCxMi/view?usp=drivesdk"
+        },
+        "options": {
+          "binaryPropertyName": "overlay",
+          "fileName": "overlay"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -4496,
+        -272
+      ],
+      "id": "401cea02-94a4-447d-9732-b1d1e003aa6d",
+      "name": "DownloadLogoOverlay",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "MrZ9G57SMn5haI0n",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "composite",
+        "dataPropertyNameComposite": "=overlay",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -4288,
+        -272
+      ],
+      "id": "48dac96f-e23e-497e-9479-e32d98a29aef",
+      "name": "OverlayLogo"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Access the first input item in 'Run Once' mode\nconst data = $input.first().json;\n\nconst output = [];\n\nfor (let i = 1; i <= 6; i++) {\n  const headingKey = `Slide ${i} Heading`;\n\n  // Get all matching subheadings\n  const subheadingKeys = Object.keys(data).filter(key =>\n    key.startsWith(`Slide ${i} Sub Heading`)\n  );\n\n  const subheadings = subheadingKeys\n    .map(key => data[key])\n    .filter(value => value && value.trim());\n\n  // Handle CTA keys for Slide 6\n  if (subheadings.length === 0 && i === 6) {\n    const ctaKeys = Object.keys(data).filter(key =>\n      key.startsWith(`Slide 6 CTA`)\n    );\n    ctaKeys.sort(); // Maintain CTA order\n    subheadings.push(\n      ...ctaKeys.map(key => data[key]).filter(value => value && value.trim())\n    );\n  }\n\n  if (data[headingKey] || subheadings.length > 0) {\n    output.push({\n      json: {\n        heading: data[headingKey] || '',\n        subheadings,\n        slideIndex: i  // ✅ Add the slide index here\n      },\n    });\n  }\n}\n\nreturn output;\n\n\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -7344,
+        -240
+      ],
+      "id": "bea99de4-c507-4bf7-a445-bfc21a9e8f8c",
+      "name": "ArrayConvert"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1AritTwvusrFNnHrTuYHNRvEaS9w4PxY50O3M9xLUEq4",
+          "mode": "list",
+          "cachedResultName": "Topic",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AritTwvusrFNnHrTuYHNRvEaS9w4PxY50O3M9xLUEq4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1727753224,
+          "mode": "list",
+          "cachedResultName": "carousel",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AritTwvusrFNnHrTuYHNRvEaS9w4PxY50O3M9xLUEq4/edit#gid=1727753224"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -8016,
+        -240
+      ],
+      "id": "5e9b0a6f-dbca-4334-8ab9-a808649f9cd4",
+      "name": "Topics",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "54w9vcN80HDUT51i",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -5200,
+        -272
+      ],
+      "id": "d347433d-9aac-4191-bc2b-fdf7dfb4aa5f",
+      "name": "Wait",
+      "webhookId": "8fe0a432-99ec-42a4-8476-f1224ca648ef"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -4880,
+        -272
+      ],
+      "id": "b858fbf7-23d6-4827-acdd-d742eb4874c3",
+      "name": "Wait1",
+      "webhookId": "bb7ac6c5-1533-4a53-89d3-ff4f8506c482"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.heading }}\n{{ $json.subheadings }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a professional visual prompt engineer for DALL·E 3. Your task is to convert the given heading and subheading into a single richly detailed, photorealistic DSLR-style visual scene. Treat this as a real-life photo shoot — with careful consideration for subject, camera angle, lighting, background, props, and atmosphere.\n\nHeading:  {{ $json.heading }} \nSubheading: {{ $json.subheadings }}\n\nBased on the topic and tone of these lines, construct a scene that visually expresses the **core message** and **emotional context**. If the topic involves health, digestion, or Ayurveda, optionally incorporate traditional Indian wellness elements such as turmeric roots, neem leaves, copper or brass utensils, clay cups, banana leaves, Ayurvedic herbs, stone grinders, or calm nature settings — but only when contextually appropriate.\n\nPay close attention to lighting:  \n- Use golden hour light for warmth or emotional scenes  \n- Soft indoor light for comforting or kitchen scenes  \n- Harsh daylight for clinical or cautionary themes  \n- Morning sunlight for health and freshness  \n- Candlelight or warm glow for spiritual or introspective tones\n\nEnsure the environment supports the message: this could be a rustic Indian kitchen, a wooden dining table with scattered herbs, a wellness corner, a quiet village home, or a clean modern counter with healthy ingredients — depending on the tone of the input.\n\nAvoid abstract, cartoonish, or surreal elements. The scene should be crisp, focused, and believable — as if shot with a high-end DSLR camera. Return **only the complete scene description** as a single line, with no labels, formatting, or quotation marks. Make sure it's a potrait image as it's for an instagram post\n "
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -5616,
+        -272
+      ],
+      "id": "95d057c7-12b1-47ae-a253-0cdc269adca6",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\t\"Prompt\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -5520,
+        -496
+      ],
+      "id": "c485fcb7-3387-4319-849f-f6a5a57922a1",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "prompt": "={{ $json.output }} ⚠️ Never generate landscape images or square formats unless explicitly instructed.\n\nFocus on vertical composition: keep key subjects centered vertically, and ensure the image fills the full height of a portrait frame.\n\nIf the prompt lacks orientation instructions, default to portrait layout suitable for Instagram posts or carousels.\n\nAvoid adding black bars or padding — generate fully framed content with no empty borders",
+        "options": {
+          "size": "1024x1792"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -5040,
+        -272
+      ],
+      "id": "bdd8db9a-14ad-4cde-ae7a-e182b458cce5",
+      "name": "Generate an image",
+      "credentials": {
+        "openAiApi": {
+          "id": "ceqiXumfieXIw3az",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -5904,
+        -272
+      ],
+      "id": "97819211-3e25-4e95-bd72-ee0d4d119b27",
+      "name": "Wait4",
+      "webhookId": "59bb038a-b48b-4047-8026-2cc20e420346"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -5616,
+        -416
+      ],
+      "id": "c63b6090-1ea4-435e-b479-3e4172b430c2",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ceqiXumfieXIw3az",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "maxItems": 2
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -7008,
+        -240
+      ],
+      "id": "577665b1-4572-403f-9a35-2d2e4fd3ce51",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "text": "=\\n\\n{{$json.subheading1}}",
+        "fontSize": 55,
+        "fontColor": "#fcf1b3",
+        "positionY": 750,
+        "lineLength": 40,
+        "options": {
+          "font": "/usr/share/fonts/truetype/msttcorefonts/Trebuchet_MS.ttf"
+        }
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2688,
+        -496
+      ],
+      "id": "756013e5-bd73-49fc-896f-def7b839985a",
+      "name": "AddSubheading9"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "text": "=\\n\\n{{$json.subheading2}}",
+        "fontSize": 55,
+        "fontColor": "#66ff00",
+        "positionX": 290,
+        "positionY": 750,
+        "lineLength": 40,
+        "options": {
+          "font": "/usr/share/fonts/truetype/msttcorefonts/Impact.ttf"
+        }
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2512,
+        -496
+      ],
+      "id": "8d5c45ce-8ab8-480f-bea8-e1f28227ade3",
+      "name": "AddSubheading10"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "text": "=\\n\\n\\n\\n{{$json.subheading3}}",
+        "fontSize": 55,
+        "fontColor": "#fcf1b3",
+        "positionY": 750,
+        "lineLength": 45,
+        "options": {
+          "font": "/usr/share/fonts/truetype/msttcorefonts/Trebuchet_MS.ttf"
+        }
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2336,
+        -496
+      ],
+      "id": "9cd2159b-898b-4e6a-803e-df406e7df41a",
+      "name": "AddSubheading11"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "text": "={{$json.subheading}}",
+        "fontSize": 50,
+        "fontColor": "#66ff00",
+        "positionY": 750,
+        "lineLength": 40,
+        "options": {
+          "font": "/usr/share/fonts/truetype/msttcorefonts/Trebuchet_MS.ttf"
+        }
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2864,
+        -496
+      ],
+      "id": "1695d7f1-2e0d-494f-ab83-3254cbc6404a",
+      "name": "AddSubheading12"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "text": "={{$json.heading}}",
+        "fontSize": 95,
+        "fontColor": "#ffffff",
+        "positionY": 600,
+        "lineLength": 25,
+        "options": {
+          "font": "/usr/share/fonts/truetype/msttcorefonts/Impact.ttf"
+        }
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -3504,
+        -272
+      ],
+      "id": "412311ed-8d5d-475c-b1e9-8af724ec041b",
+      "name": "AddHeading2"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "text": "={{ $json.slideindex }}.",
+        "fontSize": 200,
+        "fontColor": "#66ff00",
+        "positionY": 450,
+        "options": {
+          "font": "/usr/share/fonts/truetype/msttcorefonts/Impact.ttf"
+        }
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -3744,
+        -464
+      ],
+      "id": "c7cf50fc-bcce-43e3-bee7-e40756b683ee",
+      "name": "Edit Image1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b1957318-4b3f-40d3-ac4f-c3b7daef08dd",
+              "leftValue": "={{ $json.slideindex }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "c5ce0d9a-c3c4-49f6-9dca-179a86a28efd",
+              "leftValue": "={{ $json.slideindex }}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3744,
+        -256
+      ],
+      "id": "ed7ee97b-6261-41da-aca2-1a244bba1d65",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "text": "={{$json.subheading}}",
+        "fontSize": 50,
+        "fontColor": "#66ff00",
+        "positionY": 750,
+        "lineLength": 40,
+        "options": {
+          "font": "/usr/share/fonts/truetype/msttcorefonts/Trebuchet_MS.ttf"
+        }
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2816,
+        -240
+      ],
+      "id": "17642996-e7f8-4c6f-9f81-c7f3c701c0b3",
+      "name": "AddSubheading13"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -3232,
+        -240
+      ],
+      "id": "e2b66d54-d0bf-4505-b8ee-54285a915bb8",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "text": "=\\n{{$json.subheading1}}\n{{$json.subheading2}}\n{{$json.subheading3}}",
+        "fontSize": 50,
+        "fontColor": "#fcf1b3",
+        "positionY": 770,
+        "lineLength": 40,
+        "options": {
+          "font": "/usr/share/fonts/truetype/msttcorefonts/Trebuchet_MS.ttf"
+        }
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2624,
+        -240
+      ],
+      "id": "b53a0121-45ed-436b-8c21-baf4c942a9b8",
+      "name": "AddSubheading4"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2256,
+        -240
+      ],
+      "id": "192aeda3-1201-4a68-b25a-cf2304f3855a",
+      "name": "Wait7",
+      "webhookId": "31735bf9-50aa-4b9f-a709-dc567f3c5b09"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c3dba645-854b-4754-8d2d-21f626971564",
+              "leftValue": "={{ $json.slideindex }}",
+              "rightValue": 6,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3024,
+        -240
+      ],
+      "id": "87e816e0-00e4-4819-ae2d-daa8d7b12317",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "resize",
+        "width": 1024,
+        "height": 1280,
+        "resizeOption": "ignoreAspectRatio",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -4672,
+        -272
+      ],
+      "id": "b4f9b82b-449a-474f-8661-f4093a332d1c",
+      "name": "Edit Image3"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 16 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -8256,
+        -240
+      ],
+      "id": "8c5a1dfe-2e5f-42be-946c-8bc538eabf3c",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "70981f18-dbba-42b7-a9d5-8c1fbc5042f2",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "✅",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -7792,
+        -240
+      ],
+      "id": "5beff6d0-32c1-434f-9d5a-6c06897425e2",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -7584,
+        -240
+      ],
+      "id": "e61f9337-9050-4ea4-9456-089b90c1af22",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v22.0",
+        "node": "17841466971787158",
+        "edge": "media",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "image_url",
+                "value": "={{ $json.secure_url }}\n"
+              },
+              {
+                "name": "is_carousel_item",
+                "value": "true"
+              },
+              {
+                "name": "access_token",
+                "value": "=EAARjZA7vZAZBqgBPKt9tlMsinHDkI00cZBhlBYrT5JaIUNTsWenrLaGrlUmdF3NRcKAY4QIoo5gR5NKKQAnruyl64yCWH96stmUEByDpzSaM0eX2rB069Af38zrHhM0gH5l6Tcxa5YK88QOqLpd8Rc1H5ZCPZAtbd5nzBxbT7YtNmDwYrhtW1RkxOWWtTnPJ5j"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        -5456,
+        -752
+      ],
+      "id": "8e2b5185-22e1-46ba-a43d-5f8f0956d20a",
+      "name": "Facebook Graph API",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "OOGIQ814ugZrvrSN",
+          "name": "Facebook Graph account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2e56ca14-a9a3-4e7f-8d8e-849e5c8779fc",
+              "name": "id",
+              "value": "=\t{{$json[\"id\"]}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -5184,
+        -752
+      ],
+      "id": "b119f46a-3254-483b-aa06-7d98d3a591be",
+      "name": "SetMediaId"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v22.0",
+        "node": "17841466971787158",
+        "edge": "media",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "media_type",
+                "value": "CAROUSEL"
+              },
+              {
+                "name": "children",
+                "value": "={{$json[\"children\"]}}"
+              },
+              {
+                "name": "caption",
+                "value": "=\n{{$json[\"caption\"]}}\n"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        -3408,
+        -1008
+      ],
+      "id": "a339fc6c-4e06-400e-86ed-b43dfdd1edf6",
+      "name": "Facebook Graph API1",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "OOGIQ814ugZrvrSN",
+          "name": "Facebook Graph account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v22.0",
+        "node": "17841466971787158",
+        "edge": "media_publish",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "creation_id",
+                "value": "={{$json[\"id\"]}}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        -2944,
+        -1008
+      ],
+      "id": "cd3131c2-f396-46a3-badf-0dfeac45d711",
+      "name": "Facebook Graph API2",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "OOGIQ814ugZrvrSN",
+          "name": "Facebook Graph account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 6,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -6032,
+        -816
+      ],
+      "id": "d62e1ab4-ff73-464d-b5e2-08cd891af949",
+      "name": "FacebookUploadLoop"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputItems = $input.all();\n\n// Use a Set to deduplicate media IDs\nconst uniqueIds = new Set();\n\nfor (const item of inputItems) {\n  const id = item.json.id;\n  if (id && typeof id === 'string') {\n    uniqueIds.add(id.trim());\n  }\n}\n\n// Convert Set to array for Facebook `children`\nconst children = Array.from(uniqueIds);\n\n// Return output in correct format\nreturn [\n  {\n    json: {\n      children\n    }\n  }\n];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4960,
+        -1008
+      ],
+      "id": "3ac4286e-31e8-4cdb-938d-ef8e44b3c916",
+      "name": "ArrayofImageids"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -3664,
+        -1008
+      ],
+      "id": "cb1e50c3-8805-4fbc-bf39-3622e715ffe5",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d13b3ed4-036a-4810-b766-a57ef81ee0e4",
+              "name": "caption",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4512,
+        -1088
+      ],
+      "id": "226d1f97-c9ab-4841-8a4a-6d290e9e8316",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -5760,
+        -752
+      ],
+      "id": "ffe30f6f-4a83-4e71-a02c-831cb4b2f944",
+      "name": "Wait3",
+      "webhookId": "33f6573f-db00-489a-9771-2739057ded95"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -4960,
+        -752
+      ],
+      "id": "e6e0c342-1434-45dc-ba75-4585f730ac4a",
+      "name": "Wait5",
+      "webhookId": "b17dd466-0638-45b5-88d9-27383b772d07"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write an Instagram caption . The caption should reflect Ayurvedic themes like balance, nature, and wellness.Use emojis and keep it specifically ayurvedic based . Make the entire caption theme around the topic {{ $json[\"Slide 1 Heading\"] }} & {{ $json[\"Slide 1 Sub Heading \"] }} entirely .The full caption should revolve around the above idea. And also add the #dailyallday along with other hashtags as well.",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a creative Ayurvedic brand strategist writing Instagram captions for a health and wellness supplement company. Keep the tone authentic, natural, and emotionally engaging. Include 5–7 relevant hashtags."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -4896,
+        -1312
+      ],
+      "id": "6064c17b-dca0-4dd2-b398-71dec5299bbc",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -4944,
+        -1136
+      ],
+      "id": "609ecb57-acb6-444a-abe7-165a991eddd8",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ceqiXumfieXIw3az",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\t\"caption\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -4784,
+        -1184
+      ],
+      "id": "58e2e14d-827c-4e13-83b0-af61d19198d0",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -3200,
+        -1008
+      ],
+      "id": "0ee4eb80-43f0-4064-909a-29768d038e8d",
+      "name": "Wait6",
+      "webhookId": "5689763e-ebc9-44ae-8bcd-e8a1f57d780c"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1AritTwvusrFNnHrTuYHNRvEaS9w4PxY50O3M9xLUEq4",
+          "mode": "list",
+          "cachedResultName": "Topic",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AritTwvusrFNnHrTuYHNRvEaS9w4PxY50O3M9xLUEq4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1727753224,
+          "mode": "list",
+          "cachedResultName": "carousel",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AritTwvusrFNnHrTuYHNRvEaS9w4PxY50O3M9xLUEq4/edit#gid=1727753224"
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -5872,
+        -1312
+      ],
+      "id": "922c8970-2b38-4320-87e7-2f4060c1215d",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "54w9vcN80HDUT51i",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "910b2302-7987-45a9-9748-aa0a655e6a4a",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "=✅",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -5600,
+        -1312
+      ],
+      "id": "c4410836-a5f7-4b78-a953-9307357bbdcc",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1AritTwvusrFNnHrTuYHNRvEaS9w4PxY50O3M9xLUEq4",
+          "mode": "list",
+          "cachedResultName": "Topic",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AritTwvusrFNnHrTuYHNRvEaS9w4PxY50O3M9xLUEq4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1727753224,
+          "mode": "list",
+          "cachedResultName": "carousel",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AritTwvusrFNnHrTuYHNRvEaS9w4PxY50O3M9xLUEq4/edit#gid=1727753224"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Sr. No.": "={{ $json[\"Sr. No.\"] }}",
+            "Status": "✅"
+          },
+          "matchingColumns": [
+            "Sr. No."
+          ],
+          "schema": [
+            {
+              "id": "Sr. No.",
+              "displayName": "Sr. No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Slide 1 Heading",
+              "displayName": "Slide 1 Heading",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 1 Sub Heading ",
+              "displayName": "Slide 1 Sub Heading ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 2 Heading",
+              "displayName": "Slide 2 Heading",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 2 Sub Heading 1",
+              "displayName": "Slide 2 Sub Heading 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 2 Sub Heading 2",
+              "displayName": "Slide 2 Sub Heading 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 3 Heading",
+              "displayName": "Slide 3 Heading",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 3 Sub Heading 1",
+              "displayName": "Slide 3 Sub Heading 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 3 Sub Heading 2",
+              "displayName": "Slide 3 Sub Heading 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 4 Heading",
+              "displayName": "Slide 4 Heading",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 4 Sub Heading 1",
+              "displayName": "Slide 4 Sub Heading 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 4 Sub Heading 2",
+              "displayName": "Slide 4 Sub Heading 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 5 Heading",
+              "displayName": "Slide 5 Heading",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 5 Sub Heading 1",
+              "displayName": "Slide 5 Sub Heading 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 5 Sub Heading 2",
+              "displayName": "Slide 5 Sub Heading 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 6 Heading",
+              "displayName": "Slide 6 Heading",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 6 Sub Heading 1",
+              "displayName": "Slide 6 Sub Heading 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 6 Sub Heading 2",
+              "displayName": "Slide 6 Sub Heading 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Slide 6 Sub Heading 3",
+              "displayName": "Slide 6 Sub Heading 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DM Details",
+              "displayName": "DM Details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -5264,
+        -1168
+      ],
+      "id": "b4621158-ebd5-4b0d-a1a5-51191a77d61c",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "54w9vcN80HDUT51i",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -5104,
+        -1296
+      ],
+      "id": "aab55208-a372-4b6b-ac48-4d5f44902841",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -5408,
+        -1312
+      ],
+      "id": "d9e9cde2-3fbd-4aac-a143-dd209cc52d07",
+      "name": "Limit2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "FacebookUploadLoop",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Heading",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Subheading",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ImageUpload1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Heading": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Subheading": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "DownloadLogoOverlay": {
+      "main": [
+        [
+          {
+            "node": "OverlayLogo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OverlayLogo": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ArrayConvert": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Topics": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Generate an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Edit Image3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an image": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AddSubheading9": {
+      "main": [
+        [
+          {
+            "node": "AddSubheading10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AddSubheading10": {
+      "main": [
+        [
+          {
+            "node": "AddSubheading11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AddSubheading11": {
+      "main": [
+        [
+          {
+            "node": "Wait7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AddSubheading12": {
+      "main": [
+        [
+          {
+            "node": "AddSubheading9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AddHeading2": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image1": {
+      "main": [
+        [
+          {
+            "node": "AddHeading2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Edit Image1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AddHeading2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AddSubheading13": {
+      "main": [
+        [
+          {
+            "node": "AddSubheading4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AddSubheading4": {
+      "main": [
+        [
+          {
+            "node": "Wait7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "AddSubheading12",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AddSubheading13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait7": {
+      "main": [
+        [
+          {
+            "node": "ImageUpload1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image3": {
+      "main": [
+        [
+          {
+            "node": "DownloadLogoOverlay",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Topics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "ArrayConvert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook Graph API": {
+      "main": [
+        [
+          {
+            "node": "SetMediaId",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetMediaId": {
+      "main": [
+        [
+          {
+            "node": "Wait5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook Graph API1": {
+      "main": [
+        [
+          {
+            "node": "Wait6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FacebookUploadLoop": {
+      "main": [
+        [
+          {
+            "node": "ArrayofImageids",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ArrayofImageids": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Facebook Graph API1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Facebook Graph API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait5": {
+      "main": [
+        [
+          {
+            "node": "FacebookUploadLoop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait6": {
+      "main": [
+        [
+          {
+            "node": "Facebook Graph API2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Limit2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit2": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9ed51b99-b291-42ab-9d99-2e53056ebe67",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c6fbe303b567ca704776106941d288c1c745876309c8b4f0a853d8ce9fde8fc2"
+  },
+  "id": "ndlNdqe1UwN2jSBU",
+  "tags": []
+}
